@@ -1,83 +1,145 @@
-Kubernetes AI Failure Predictor
-This repository contains an AI-powered failure prediction system deployed on Kubernetes. The system utilizes machine learning models to analyze Prometheus metrics and predict failures in a Kubernetes environment.
+## **K8's Failure Predictor 🚀**  
 
-📌 Project Structure
-graphql
-Copy
-Edit
-📂 K8/
- ├── __pycache__/                # Cached Python files
- ├── Dockerfile                  # Docker configuration
- ├── app.py                      # FastAPI application for predictions
- ├── fetch_metrics.py            # Script to fetch Prometheus metrics
- ├── k8s-deployment.yaml         # Kubernetes deployment configuration
- ├── k8s_failure_model.pkl       # Pretrained AI model
- ├── patch.json                  # Patch file for Kubernetes service updates
- ├── prometheus_data.csv         # Sample Prometheus data (CSV format)
- ├── prometheus_data.json        # Sample Prometheus data (JSON format)
- ├── train_model.py              # Model training script
- ├── README.md                   # Project documentation
-🚀 Getting Started
-1️⃣ Prerequisites
-Minikube (for local Kubernetes cluster)
-Docker
-kubectl (Kubernetes CLI)
-Python 3.x
-Prometheus (for monitoring)
-2️⃣ Setup & Deployment
-🔹 Step 1: Build and Push Docker Image
-sh
-Copy
-Edit
+### **📌 Overview**  
+The **AI Failure Predictor** leverages **machine learning** and **Prometheus monitoring** to detect potential system failures in a **Kubernetes cluster** before they happen. This helps in **proactive maintenance** and **reducing downtime**.  
+
+---
+
+## **📂 Project Structure**  
+
+```bash
+K8/
+│── Dockerfile                 # Docker setup for the application
+│── app.py                      # Main API for prediction
+│── fetch_metrics.py            # Script to fetch Prometheus metrics
+│── k8s-deployment.yaml         # Kubernetes deployment configuration
+│── k8s_failure_model.pkl       # Trained ML model
+│── patch.json                  # Patch file for Kubernetes service
+│── prometheus_data.csv         # Sample Prometheus metrics dataset
+│── prometheus_data.json        # Prometheus data in JSON format
+│── train_model.py              # Model training script
+│── README.md                   # Project documentation
+```
+
+---
+
+## **🚀 Installation & Setup**  
+
+### **🔹 Prerequisites**  
+Ensure you have the following installed:  
+- **Docker**  
+- **Kubernetes (kubectl, Minikube, or a cluster)**  
+- **Python 3.8+**  
+- **Prometheus for monitoring**  
+
+### **🔹 Clone the Repository**  
+```bash
+git clone https://github.com/Sonlux/Hthons.git
+cd Hthons/K8
+```
+
+### **🔹 Build & Run Docker Container**  
+```bash
 docker build -t ai-failure-predictor .
-docker tag ai-failure-predictor <your-dockerhub-username>/ai-failure-predictor:latest
-docker push <your-dockerhub-username>/ai-failure-predictor:latest
-🔹 Step 2: Deploy to Kubernetes
-sh
-Copy
-Edit
+docker run -p 8000:8000 ai-failure-predictor
+```
+
+### **🔹 Deploy to Kubernetes**  
+```bash
 kubectl apply -f k8s-deployment.yaml
-🔹 Step 3: Expose the Service
-sh
-Copy
-Edit
-kubectl patch svc ai-failure-predictor --type merge --patch '{"spec": {"type": "NodePort"}}'
-🔹 Step 4: Access the API
-sh
-Copy
-Edit
+```
+
+Check the status of the pod:  
+```bash
+kubectl get pods
+```
+
+Expose the service:  
+```bash
+kubectl expose deployment ai-failure-predictor --type=NodePort --port=8000
+```
+
+Find the service URL:  
+```bash
 minikube service ai-failure-predictor --url
-Visit the URL shown in the output.
+```
 
-📊 Fetching Prometheus Metrics
-To collect Prometheus metrics, run:
+---
 
-sh
-Copy
-Edit
-python fetch_metrics.py
-📜 Model Training
-If you want to retrain the AI model:
+## **🖥️ API Endpoints**  
 
-sh
-Copy
-Edit
+| Endpoint            | Method | Description |
+|---------------------|--------|-------------|
+| `/predict`         | `POST` | Sends Prometheus data to predict failures |
+| `/metrics`         | `GET`  | Fetches real-time Prometheus metrics |
+| `/health`          | `GET`  | Checks if the API is running |
+
+### **🔹 Example API Call**  
+```bash
+curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"cpu_usage": 75, "memory_usage": 80, "disk_io": 50}'
+```
+
+---
+
+## **📊 Monitoring with Prometheus & Grafana**  
+
+1. **Start Prometheus**  
+   ```bash
+   prometheus --config.file=prometheus.yml
+   ```
+2. **Access Prometheus Dashboard**  
+   ```
+   http://localhost:9090
+   ```
+3. **Visualize Metrics in Grafana**  
+   - Add Prometheus as a data source  
+   - Create dashboards for monitoring  
+
+---
+
+## **⚙️ Patching the Service (NodePort)**  
+
+If your service isn't accessible, patch it:  
+```bash
+kubectl patch svc ai-failure-predictor --type="merge" --patch='{"spec": {"type": "NodePort"}}'
+```
+
+To check the new port:  
+```bash
+kubectl get svc ai-failure-predictor
+```
+
+---
+
+## **🤖 Model Training**  
+
+To retrain the ML model:  
+```bash
 python train_model.py
-📮 API Endpoints
-Method	Endpoint	Description
-GET	/	Health check
-POST	/predict	Predict system failures
-Example request:
+```
 
-json
-Copy
-Edit
-{
-  "cpu_usage": 75.3,
-  "memory_usage": 60.5,
-  "disk_io": 20.1
-}
-👨‍💻 Contributors
-Lakshan (@YourGitHubHandle)
-📜 License
-This project is licensed under the MIT License.
+---
+
+## **🐛 Troubleshooting**  
+
+| Issue | Solution |
+|-------|----------|
+| **Service not accessible** | Check if the service is exposed using `kubectl expose` |
+| **Pod stuck in `Pending` state** | Run `kubectl describe pod <pod-name>` for details |
+| **Docker build issues** | Ensure Docker daemon is running |
+
+---
+
+## **🔮 Future Enhancements**  
+✅ **Multi-cluster support**  
+✅ **Real-time alerting with Prometheus**  
+✅ **More advanced ML models for failure prediction**  
+
+---
+
+## **📜 License**  
+This project is licensed under the **MIT License**.  
+
+---
+
+This README is **well-structured**, ensuring proper alignment in GitHub. Let me know if you need modifications! 🚀
